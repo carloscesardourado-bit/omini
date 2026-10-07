@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omini Achadinhos - Os Melhores Achados da Internet</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo & Brand -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Omini Achadinhos</h1>
+                    <p class="text-xs text-slate-500 font-medium">Sua curadoria diária de ofertas</p>
+                </div>
+            </div>
+
+            <!-- Search and Controls -->
+            <div class="hidden md:flex items-center space-x-4 flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Pesquisar achadinhos..." class="w-full pl-10 pr-4 py-2.5 bg-slate-100 border border-transparent rounded-xl text-sm focus:outline-none focus:bg-white focus:border-indigo-500 transition-all">
+                </div>
+            </div>
+
+            <!-- Admin Button / Actions -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openAdminModal()" class="inline-flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-all cursor-pointer">
+                    <i class="fa-solid fa-sliders text-xs"></i>
+                    <span class="hidden sm:inline">Gerenciar Produtos</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Search Bar -->
+        <div class="px-4 pb-4 md:hidden">
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </span>
+                <input type="text" id="mobileSearchInput" placeholder="Pesquisar achadinhos..." class="w-full pl-10 pr-4 py-2.5 bg-slate-100 border border-transparent rounded-xl text-sm focus:outline-none focus:bg-white focus:border-indigo-500 transition-all">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Banner -->
+        <div class="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl p-8 sm:p-12 text-white mb-10 shadow-xl shadow-indigo-100 relative overflow-hidden flex flex-col justify-center items-start">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md mb-4 text-white">
+                <i class="fa-solid fa-fire text-amber-300"></i> Ofertas Checadas Diariamente
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Os melhores achados da internet reunidos em um só lugar</h2>
+            <p class="text-indigo-100 text-base max-w-2xl font-normal leading-relaxed mb-6">
+                Encontramos os produtos mais úteis, criativos e com os menores preços do mercado para você economizar tempo e dinheiro.
+            </p>
+        </div>
+
+        <!-- Filter category tags (dynamic or static sample filters) -->
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-box-open text-indigo-600"></i> Achadinhos em Destaque
+            </h3>
+            <span id="productCount" class="text-xs font-semibold px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full">4 produtos</span>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Products will be injected dynamically via JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h4 class="text-lg font-bold text-slate-700">Nenhum produto encontrado</h4>
+            <p class="text-sm text-slate-500 mt-1">Tente pesquisar por outro termo ou cadastre um novo produto.</p>
+        </div>
+
+    </main>
+
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Gerenciar Achadinhos</h3>
+                    <p class="text-xs text-slate-500">Adicione novos produtos ou remova os existentes da sua loja.</p>
+                </div>
+                <button onclick="closeAdminModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Form to add product -->
+            <form id="productForm" onsubmit="handleSaveProduct(event)" class="space-y-4 mb-8 bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-2">Cadastrar Novo Produto</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Título do Produto</label>
+                        <input type="text" id="pTitle" required placeholder="Ex: Luminária LED Touch" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Tag de Destaque (Badge)</label>
+                        <input type="text" id="pBadge" placeholder="Ex: Mais Vendido" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Preço Atual (R$)</label>
+                        <input type="text" id="pPrice" required placeholder="Ex: 89,90" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Preço Anterior Riscado (R$)</label>
+                        <input type="text" id="pOldPrice" placeholder="Ex: 149,90" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">URL da Imagem</label>
+                    <input type="url" id="pImage" required placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Link de Afiliado (URL de Compra)</label>
+                    <input type="url" id="pLink" required placeholder="https://seu-link-afiliado.com/produto" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Breve Descrição / Benefício</label>
+                    <input type="text" id="pDesc" required placeholder="Ex: Bateria recarregável e 3 intensidades de luz." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="pt-2 flex justify-end">
+                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-indigo-200 transition-all cursor-pointer">
+                        Salvar e Publicar Produto
+                    </button>
+                </div>
+            </form>
+
+            <!-- Product List for Deletion -->
+            <div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3">Produtos Ativos na Loja</h4>
+                <div id="adminProductList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-3 transform translate-y-24 opacity-0 transition-all duration-300 z-50 text-sm font-medium">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMessage">Ação realizada com sucesso!</span>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200/60 mt-16 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+                    O
+                </div>
+                <span class="font-bold text-slate-900">Omini Achadinhos</span>
+            </div>
+            
+            <p class="text-xs text-slate-500 max-w-xl">
+                <strong>Aviso de Afiliado:</strong> Como participante de programas de afiliados, podemos receber comissões em compras qualificadas sem nenhum custo adicional para você.
+            </p>
+
+            <div class="flex items-center space-x-4 text-slate-400">
+                <a href="#" class="hover:text-indigo-600 transition-colors"><i class="fa-brands fa-instagram text-lg"></i></a>
+                <a href="#" class="hover:text-indigo-600 transition-colors"><i class="fa-brands fa-tiktok text-lg"></i></a>
+                <a href="#" class="hover:text-indigo-600 transition-colors"><i class="fa-brands fa-whatsapp text-lg"></i></a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 pt-6 border-t border-slate-100 text-center text-xs text-slate-400">
+            &copy; 2026 Omini Achadinhos. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script>
+        // Default initial sample products (4 items)
+        const defaultProducts = [
+            {
+                id: '1',
+                title: 'Mini Projetor Portátil Smart LED com Conexão Wi-Fi',
+                badge: 'Mais Vendido',
+                price: '289,90',
+                oldPrice: '450,00',
+                image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600',
+                link: 'https://exemplo.com/afiliado/projetor',
+                description: 'Transforme qualquer parede em uma tela de cinema. Compacto e super prático.'
+            },
+            {
+                id: '2',
+                title: 'Fone de Ouvido Bluetooth TWS com Cancelamento de Ruído',
+                badge: 'Frete Grátis',
+                price: '99,90',
+                oldPrice: '160,00',
+                image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600',
+                link: 'https://exemplo.com/afiliado/fone',
+                description: 'Som estéreo imersivo, bateria de longa duração e design ergonômico confortável.'
+            },
+            {
+                id: '3',
+                title: 'Suporte Articulado para Notebook de Mesa Ergonômico',
+                badge: 'Super Desconto',
+                price: '79,90',
+                oldPrice: '129,90',
+                image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=600',
+                link: 'https://exemplo.com/afiliado/suporte',
+                description: 'Melhore sua postura no home office com regulagem de altura e excelente ventilação.'
+            },
+            {
+                id: '4',
+                title: 'Luminária de Mesa LED Touch RGB Recarregável USB',
+                badge: 'Tendência',
+                price: '49,90',
+                oldPrice: '89,90',
+                image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=600',
+                link: 'https://exemplo.com/afiliado/luminaria',
+                description: 'Iluminação ajustável para leitura ou decoração de ambientes modernos.'
+            }
+        ];
+
+        // Retrieve products from localStorage or initialize defaults
+        function getProducts() {
+            const saved = localStorage.getItem('omini_achadinhos_products');
+            if (!saved) {
+                localStorage.setItem('omini_achadinhos_products', JSON.stringify(defaultProducts));
+                return defaultProducts;
+            }
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                return defaultProducts;
+            }
+        }
+
+        function saveProducts(products) {
+            localStorage.setItem('omini_achadinhos_products', JSON.stringify(products));
+        }
+
+        // Render products on the grid
+        function renderProducts(filterText = '') {
+            const products = getProducts();
+            const grid = document.getElementById('productsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const productCount = document.getElementById('productCount');
+
+            const filtered = products.filter(p => 
+                p.title.toLowerCase().includes(filterText.toLowerCase()) || 
+                p.description.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            productCount.innerText = `${filtered.length} produto${filtered.length === 1 ? '' : 's'}`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group">
+                    <!-- Image Container -->
+                    <div class="relative bg-slate-100 aspect-square overflow-hidden">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x600/e2e8f0/64748b?text=Sem+Imagem'">
+                        ${p.badge ? `<span class="absolute top-3 left-3 px-3 py-1 bg-indigo-600/90 backdrop-blur-md text-white text-xs font-semibold rounded-full shadow-md">${p.badge}</span>` : ''}
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-base leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">${p.title}</h4>
+                            <p class="text-xs text-slate-500 mb-4 line-clamp-2">${p.description}</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-baseline space-x-2 mb-4">
+                                <span class="text-xs text-slate-400">Por</span>
+                                <span class="text-xl font-black text-slate-900">R$ ${p.price}</span>
+                                ${p.oldPrice ? `<span class="text-xs text-slate-400 line-through">R$ ${p.oldPrice}</span>` : ''}
+                            </div>
+
+                            <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center space-x-2 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-2xl shadow-md shadow-emerald-200 transition-all text-sm cursor-pointer">
+                                <span>Ver na Loja</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render admin management list
+        function renderAdminList() {
+            const products = getProducts();
+            const listContainer = document.getElementById('adminProductList');
+
+            if (products.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Nenhum produto cadastrado no momento.</p>`;
+                return;
+            }
+
+            listContainer.innerHTML = products.map(p => `
+                <div class="flex items-center justify-between p-3 bg-white border border-slate-200/60 rounded-xl">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <img src="${p.image}" class="w-10 h-10 object-cover rounded-lg shrink-0" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=Img'">
+                        <div class="truncate">
+                            <p class="text-xs font-bold text-slate-800 truncate">${p.title}</p>
+                            <p class="text-[11px] text-slate-500">R$ ${p.price}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteProduct('${p.id}')" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors shrink-0 cursor-pointer" title="Excluir produto">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Modal Controls
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            renderAdminList();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+            renderProducts(document.getElementById('searchInput').value);
+        }
+
+        // Handle Add Product Form
+        function handleSaveProduct(e) {
+            e.preventDefault();
+            const title = document.getElementById('pTitle').value;
+            const badge = document.getElementById('pBadge').value;
+            const price = document.getElementById('pPrice').value;
+            const oldPrice = document.getElementById('pOldPrice').value;
+            const image = document.getElementById('pImage').value;
+            const link = document.getElementById('pLink').value;
+            const description = document.getElementById('pDesc').value;
+
+            const newProduct = {
+                id: Date.now().toString(),
+                title,
+                badge,
+                price,
+                oldPrice,
+                image,
+                link,
+                description
+            };
+
+            const products = getProducts();
+            products.unshift(newProduct);
+            saveProducts(products);
+
+            // Reset form & update lists
+            document.getElementById('productForm').reset();
+            renderAdminList();
+            showToast('Produto cadastrado com sucesso!');
+        }
+
+        // Delete Product
+        function deleteProduct(id) {
+            let products = getProducts();
+            products = products.filter(p => p.id !== id);
+            saveProducts(products);
+            renderAdminList();
+            showToast('Produto removido com sucesso!');
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        // Search Handlers
+        const searchInput = document.getElementById('searchInput');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+
+        searchInput.addEventListener('input', (e) => {
+            mobileSearchInput.value = e.target.value;
+            renderProducts(e.target.value);
+        });
+
+        mobileSearchInput.addEventListener('input', (e) => {
+            searchInput.value = e.target.value;
+            renderProducts(e.target.value);
+        });
+
+        // Initial setup on load
+        window.onload = function() {
+            renderProducts();
+        }
+    </script>
+</body>
+</html>
